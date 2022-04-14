@@ -121,8 +121,10 @@ bool PoseDisplay::eventFilter(QObject * _object, QEvent * _event)
 ////////////////////////////////////////////////////////////////////////////////
 void PoseDisplay::reset()
 {
-  this->arrow.visual->SetLocalPose(math::Pose3d::Zero);
-  this->axis.visual->SetLocalPose(math::Pose3d::Zero);
+  if (this->arrow.visual != nullptr)
+    this->arrow.visual->SetLocalPose(math::Pose3d::Zero);
+  if (this->axis.visual != nullptr)
+    this->axis.visual->SetLocalPose(math::Pose3d::Zero);
   this->msg.reset();
 }
 
@@ -223,12 +225,14 @@ void PoseDisplay::setArrowDimensions(
 ////////////////////////////////////////////////////////////////////////////////
 void PoseDisplay::setColor(const QColor & _color)
 {
+  
   std::lock_guard<std::mutex>(this->lock);
   this->arrow.mat->SetAmbient(_color.redF(), _color.greenF(), _color.blueF(), _color.alphaF());
   this->arrow.mat->SetDiffuse(_color.redF(), _color.greenF(), _color.blueF(), _color.alphaF());
   this->arrow.mat->SetEmissive(_color.redF(), _color.greenF(), _color.blueF(), _color.alphaF());
 
-  this->arrow.visual->SetMaterial(this->arrow.mat);
+  if (this->axis.visual != nullptr)
+    this->arrow.visual->SetMaterial(this->arrow.mat);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
